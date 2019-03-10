@@ -1,9 +1,9 @@
-package db.mmethods.function
+package db.mmethods.nonlinear.function
 
-import db.mmethods.function.Value.*
-import db.mmethods.utils.DoubleComparator
-import db.mmethods.utils.DoubleRange
-import db.mmethods.utils.toTreeMap
+import db.mmethods.nonlinear.function.Value.*
+import db.mmethods.nonlinear.utils.DoubleComparator
+import db.mmethods.nonlinear.utils.DoubleRange
+import db.mmethods.nonlinear.utils.toTreeMap
 import java.util.*
 
 enum class Value {

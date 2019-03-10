@@ -1,7 +1,7 @@
-package db.mmethods
+package db.mmethods.nonlinear
 
-import db.mmethods.function.PeriodicRangeToBoolean
-import db.mmethods.function.Value.*
+import db.mmethods.nonlinear.function.PeriodicRangeToBoolean
+import db.mmethods.nonlinear.function.Value.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest

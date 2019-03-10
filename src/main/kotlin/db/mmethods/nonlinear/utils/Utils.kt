@@ -1,4 +1,4 @@
-package db.mmethods.utils
+package db.mmethods.nonlinear.utils
 
 import java.util.*
 
