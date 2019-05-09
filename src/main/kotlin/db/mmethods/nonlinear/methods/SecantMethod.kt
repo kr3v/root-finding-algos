@@ -21,8 +21,7 @@ object SecantMethod : IterationMethod {
         if (fn(range.start) * fn(range.endInclusive) > 0) return Errors.NO_ROOT.invalid()
         if (checkIfRangeIsSmall(range, eps, fn)) return range.middle().indexed(0).valid()
 
-        val x0 = listOf(range.start, range.middle(), range.endInclusive).minBy(fn)!!
-        val x1 = if (fn(x0).sign == fn(range.endInclusive).sign) range.start else range.endInclusive
+        val (x0, x1) = initialApproximations(range, fn)
 
         val fnDifferentialMin = fn.differential.allExtremaValues(range).map { it.absoluteValue }.min
         val result = generateSequence(x0, phi(fn, x1))
@@ -31,6 +30,14 @@ object SecantMethod : IterationMethod {
 
         return if (result.value in range) result.valid()
         else Errors.DIVERGES.invalid()
+    }
+
+    private fun initialApproximations(range: DoubleRange, fn: DifferentiableTwiceFunction): Pair<Double, Double> {
+        val l = splitByFour(range)
+        val x0 = l.filter { fn(it).sign == fn.secondDifferential(it).sign }.minBy { fn(it).absoluteValue }!!
+        val fx0sign = fn(x0).sign
+        val x1 = l.filter { fn(it).sign != fx0sign }.minBy { fn(it).absoluteValue }!!
+        return Pair(x0, x1)
     }
 
     private fun phi(fn: DifferentiableTwiceFunction, c: Double) = { x: Double -> x - (x - c) * fn(x) / (fn(x) - fn(c)) }

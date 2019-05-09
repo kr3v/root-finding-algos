@@ -10,11 +10,15 @@ fun main(args: Array<String>) {
     println(
         SecantMethod.apply(
             DifferentiableTwiceFunction(
-                Function({ x -> x * x + 3.0 * x - 4.0 }),
-                Function({ x -> 2.0 * x + 3.0 }),
-                Function({ x -> 2.0 }, EmptyRangeToBoolean(), EmptyRangeToBoolean())
+                Function({ x -> 2.0 * x * x * x - (6.0 + Math.sqrt(2.0)) * x * x + (3.0 * Math.sqrt(2.0) - 2.0) * x + 6 }),
+                Function({ x -> 6.0 * x * x - 2.0 * (6.0 + Math.sqrt(2.0)) * x + (3.0 * Math.sqrt(2.0) - 2.0) }),
+                Function(
+                    { x -> 12.0 * x - 2.0 * (6.0 + Math.sqrt(2.0)) },
+                    SimpleRangeToBoolean(1.0 + Math.sqrt(2.0) / 6.0),
+                    EmptyRangeToBoolean()
+                )
             ),
-            -100.0..-1.501,
+            2.4..4.0,
             1e-6
         )
     )

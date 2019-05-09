@@ -14,5 +14,15 @@ fun Sequence<Double>.nonZeroAndHasSameSign() =
 fun DoubleRange.middle() = (endInclusive + start) / 2.0
 fun Double.indexed(idx: Int) = IndexedValue(idx, this)
 
+fun splitByFour(range: DoubleRange): List<Double> {
+    return listOf(
+        range.start,
+        (range.start..range.middle()).middle(),
+        range.middle(),
+        (range.middle()..range.endInclusive).middle(),
+        range.endInclusive
+    )
+}
+
 fun <K : Comparable<K>, V> List<Pair<K, V>>.toTreeMap(comparator: Comparator<K>) =
     TreeMap(toMap().toSortedMap(comparator))

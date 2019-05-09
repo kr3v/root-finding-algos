@@ -21,8 +21,14 @@ import kotlin.math.absoluteValue
 
 class MethodsTest {
 
-    private val eps = (-6..-3).map { pow(10.0, it.toDouble()) }
-    private val methods = listOf(NewtonMethod, FixedPointMethod, SecantMethod, BinarySearchMethod)
+    private val eps = (-8..-2).map { pow(10.0, it.toDouble()) }
+    private val methods: List<IterationMethod> = listOf(
+        NewtonMethod,
+        FixedPointMethod,
+        SecantMethod,
+        BinarySearchMethod,
+        CombinedNewtonAndSecantMethod
+    )
 
     @TestFactory
     fun quadraticFunction(): Stream<DynamicTest> {
@@ -76,7 +82,13 @@ class MethodsTest {
         val tests = listOf(
             2.4..2.9 to Errors.NO_ROOT.invalid(),
             2.1..3.1 to Errors.NOT_APPLICABLE.invalid(),
-            2.4..3.1 to (3.0).valid()
+            2.4..3.1 to Valid(3.0),
+            2.4..4.0 to Valid(3.0),
+            2.4..31.0 to Valid(3.0),
+            2.4..310.0 to Valid(3.0),
+            2.9..3.1 to Valid(3.0),
+            2.9..31.0 to Valid(3.0),
+            2.9..310.0 to Valid(3.0)
         )
         return test(tests, function)
     }
@@ -87,14 +99,16 @@ class MethodsTest {
     ): Stream<DynamicTest> =
         eps.map { eps ->
             methods.map { method ->
-                tests.map { (range, expected) ->
-                    val given = method.apply(function, range, eps)
-                    val idx = given.fold({ "-" }, { it.index.toString() })
-                    val name = method.javaClass.simpleName
-                    dynamicTest("($range, $eps) -> $idx on $name (expected = $expected, given = $given)") {
-                        dynamicTest(expected, given.map { it.value }, eps)
+                tests
+                    .filterNot { (_, expected) -> method == BinarySearchMethod && expected == Errors.NOT_APPLICABLE.invalid() }
+                    .map { (range, expected) ->
+                        val given = method.apply(function, range, eps)
+                        val idx = given.fold({ "-" }, { it.index.toString() })
+                        val name = method.javaClass.simpleName
+                        dynamicTest("($range, $eps) -> $idx on $name (expected = $expected, given = $given)") {
+                            dynamicTest(expected, given.map { it.value }, eps)
+                        }
                     }
-                }
             }.flatten()
         }.flatten().stream()
 
