@@ -22,7 +22,7 @@ import kotlin.math.absoluteValue
 class MethodsTest {
 
     private val eps = (-6..-3).map { pow(10.0, it.toDouble()) }
-    private val methods = listOf(NewtonMethod, FixedPointMethod, SecantMethod)
+    private val methods = listOf(NewtonMethod, FixedPointMethod, SecantMethod, BinarySearchMethod)
 
     @TestFactory
     fun quadraticFunction(): Stream<DynamicTest> {
