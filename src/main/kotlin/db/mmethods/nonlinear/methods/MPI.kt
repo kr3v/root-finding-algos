@@ -4,7 +4,6 @@ import arrow.data.Invalid
 import arrow.data.Validated
 import arrow.data.valid
 import db.mmethods.nonlinear.function.*
-import db.mmethods.nonlinear.function.Function
 import db.mmethods.nonlinear.utils.DoubleRange
 import db.mmethods.nonlinear.utils.max
 import db.mmethods.nonlinear.utils.min
@@ -42,21 +41,3 @@ object MPI {
     }
 }
 
-enum class Errors {
-    NOT_APPLICABLE,
-    NO_ROOT
-}
-
-fun main(args: Array<String>) {
-    print(
-        MPI.apply(
-            DifferentiableTwiceFunction(
-                Function({ x -> x * x + 3.0 * x - 4.0 }),
-                Function({ x -> 2.0 * x + 3.0 }),
-                Function({ x -> 2.0 }, EmptyRangeToBoolean())
-            ),
-            -8.0..-1.51,
-            1e-3
-        )
-    )
-}
