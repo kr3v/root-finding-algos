@@ -22,14 +22,14 @@ import kotlin.math.absoluteValue
 class MethodsTest {
 
     private val eps = (-6..-3).map { pow(10.0, it.toDouble()) }
-    private val methods = listOf(NewtonMethod, FixedPointMethod)
+    private val methods = listOf(NewtonMethod, FixedPointMethod, SecantMethod)
 
     @TestFactory
     fun quadraticFunction(): Stream<DynamicTest> {
         val function = DifferentiableTwiceFunction(
             Function({ x -> x * x + 3.0 * x - 4.0 }),
             Function({ x -> 2.0 * x + 3.0 }),
-            Function({ x -> 2.0 }, EmptyRangeToBoolean())
+            Function({ x -> 2.0 }, EmptyRangeToBoolean(), EmptyRangeToBoolean())
         )
         val roots = listOf(-4.0, 1.0)
         val tests = listOf(
@@ -63,7 +63,7 @@ class MethodsTest {
         val function = DifferentiableTwiceFunction(
             Function({ x -> 2.0 * x * x * x - (6.0 + sqrt(2.0)) * x * x + (3.0 * sqrt(2.0) - 2.0) * x + 6 }),
             Function({ x -> 6.0 * x * x - 2.0 * (6.0 + sqrt(2.0)) * x + (3.0 * sqrt(2.0) - 2.0) }),
-            Function({ x -> 12.0 * x - 2.0 * (6.0 + sqrt(2.0)) }, SimpleRangeToBoolean(1.0 + sqrt(2.0) / 6.0))
+            Function({ x -> 12.0 * x - 2.0 * (6.0 + sqrt(2.0)) }, SimpleRangeToBoolean(1.0 + sqrt(2.0) / 6.0), EmptyRangeToBoolean())
         )
         val roots = listOf(-1.0 / sqrt(2.0), sqrt(2.0), 3.0)
         val tests = listOf(
@@ -81,8 +81,8 @@ class MethodsTest {
         eps.map { eps ->
             methods.map { method ->
                 tests.map { (range, expected) ->
-                    dynamicTest("${method.javaClass.simpleName}: $range -> (expected = $expected, eps = $eps)") {
-                        val given = method.apply(function, range, eps)
+                    val given = method.apply(function, range, eps)
+                    dynamicTest("${method.javaClass.simpleName}: $range -> (expected = $expected, given = $given, eps = $eps)") {
                         dynamicTest(expected, given.map { it.value }, eps)
                     }
                 }
