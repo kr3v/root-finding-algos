@@ -23,7 +23,7 @@ object NewtonMethod : IterationMethod {
         val x0 = range.middle()
         val secondDifferentialSign = fn.secondDifferential(range.start).sign
 
-        val predicate = if (fn(x0) == secondDifferentialSign) {
+        val predicate = if (fn(x0).sign == secondDifferentialSign) {
             val minFnDifferential = fn.differential.allExtremaValues(range).map { it.absoluteValue }.min
             { _: Double, x2: Double -> fn(x2).absoluteValue / minFnDifferential < eps }
         } else {

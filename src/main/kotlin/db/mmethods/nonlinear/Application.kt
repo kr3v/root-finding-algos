@@ -3,19 +3,19 @@ package db.mmethods.nonlinear
 import db.mmethods.nonlinear.function.DifferentiableTwiceFunction
 import db.mmethods.nonlinear.function.EmptyRangeToBoolean
 import db.mmethods.nonlinear.function.Function
-import db.mmethods.nonlinear.methods.FixedPointMethod
-import db.mmethods.nonlinear.methods.NewtonMethod
+import db.mmethods.nonlinear.function.SimpleRangeToBoolean
+import db.mmethods.nonlinear.methods.SecantMethod
 
 fun main(args: Array<String>) {
     println(
-        NewtonMethod.apply(
+        SecantMethod.apply(
             DifferentiableTwiceFunction(
                 Function({ x -> x * x + 3.0 * x - 4.0 }),
                 Function({ x -> 2.0 * x + 3.0 }),
-                Function({ x -> 2.0 }, EmptyRangeToBoolean())
+                Function({ x -> 2.0 }, EmptyRangeToBoolean(), EmptyRangeToBoolean())
             ),
-            -12.0..-1.51,
-            1e-3
+            -100.0..-1.501,
+            1e-6
         )
     )
 }

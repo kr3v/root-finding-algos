@@ -39,6 +39,9 @@ class MethodsTest {
             -4.6..-3.6 to Valid(-4.0),
             -6.6..-2.6 to Valid(-4.0),
             -8.0..-1.5 to Errors.NOT_APPLICABLE.invalid(),
+            -8.0..-1.51 to Valid(-4.0),
+            -8.0..-1.501 to Valid(-4.0),
+            -100.0..-1.501 to Valid(-4.0),
             -8.0..-1.6 to Valid(-4.0),
             -3.5..-2.5 to Errors.NO_ROOT.invalid(),
             -3.9..-2.0 to Errors.NO_ROOT.invalid(),
@@ -63,7 +66,11 @@ class MethodsTest {
         val function = DifferentiableTwiceFunction(
             Function({ x -> 2.0 * x * x * x - (6.0 + sqrt(2.0)) * x * x + (3.0 * sqrt(2.0) - 2.0) * x + 6 }),
             Function({ x -> 6.0 * x * x - 2.0 * (6.0 + sqrt(2.0)) * x + (3.0 * sqrt(2.0) - 2.0) }),
-            Function({ x -> 12.0 * x - 2.0 * (6.0 + sqrt(2.0)) }, SimpleRangeToBoolean(1.0 + sqrt(2.0) / 6.0), EmptyRangeToBoolean())
+            Function(
+                { x -> 12.0 * x - 2.0 * (6.0 + sqrt(2.0)) },
+                SimpleRangeToBoolean(1.0 + sqrt(2.0) / 6.0),
+                EmptyRangeToBoolean()
+            )
         )
         val roots = listOf(-1.0 / sqrt(2.0), sqrt(2.0), 3.0)
         val tests = listOf(
@@ -82,7 +89,9 @@ class MethodsTest {
             methods.map { method ->
                 tests.map { (range, expected) ->
                     val given = method.apply(function, range, eps)
-                    dynamicTest("${method.javaClass.simpleName}: $range -> (expected = $expected, given = $given, eps = $eps)") {
+                    val idx = given.fold({ "-" }, { it.index.toString() })
+                    val name = method.javaClass.simpleName
+                    dynamicTest("($range, $eps) -> $idx on $name (expected = $expected, given = $given)") {
                         dynamicTest(expected, given.map { it.value }, eps)
                     }
                 }
