@@ -19,9 +19,10 @@ import java.lang.Math.sqrt
 import java.util.stream.Stream
 import kotlin.math.absoluteValue
 
-class MPITest {
+class MethodsTest {
 
-    private val EPSs = (-6..-3).map { pow(10.0, it.toDouble()) }
+    private val eps = (-6..-3).map { pow(10.0, it.toDouble()) }
+    private val methods = listOf(NewtonMethod, FixedPointMethod)
 
     @TestFactory
     fun quadraticFunction(): Stream<DynamicTest> {
@@ -76,14 +77,17 @@ class MPITest {
     private fun test(
         tests: List<Pair<ClosedFloatingPointRange<Double>, Validated<Errors, Double>>>,
         function: DifferentiableTwiceFunction
-    ): Stream<DynamicTest> = EPSs.map { eps ->
-        tests.map { (range, expected) ->
-            val given = MPI.apply(function, range, eps)
-            dynamicTest("$range -> (expected = $expected, eps = $eps)") {
-                dynamicTest(expected, given.map { it.value }, eps)
-            }
-        }
-    }.flatten().stream()
+    ): Stream<DynamicTest> =
+        eps.map { eps ->
+            methods.map { method ->
+                tests.map { (range, expected) ->
+                    dynamicTest("${method.javaClass.simpleName}: $range -> (expected = $expected, eps = $eps)") {
+                        val given = method.apply(function, range, eps)
+                        dynamicTest(expected, given.map { it.value }, eps)
+                    }
+                }
+            }.flatten()
+        }.flatten().stream()
 
     private fun dynamicTest(
         expected: Validated<Errors, Double>,

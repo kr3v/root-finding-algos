@@ -10,8 +10,8 @@ import db.mmethods.nonlinear.utils.min
 import db.mmethods.nonlinear.utils.nonZeroAndHasSameSign
 import kotlin.math.absoluteValue
 
-object MPI {
-    fun apply(
+object FixedPointMethod : IterationMethod {
+    override fun apply(
         fn: DifferentiableTwiceFunction,
         range: DoubleRange,
         eps: Double
@@ -28,15 +28,14 @@ object MPI {
         // val k = -2.0 / (seq.map { it.absoluteValue }.max + seq.map { it.absoluteValue }.min) * fn.differential(range.start).sign
         val k = -2.0 / (seq.max + seq.min)
 
-        val phi = x + fn * k
+        val phi = xFn + fn * k
         val q = (fn.differential * k + 1.0).allExtremaValues(range).map { it.absoluteValue }.max
         val `q div (1-q)` = q / (1.0 - q)
 
         return generateSequence((range.start + range.endInclusive) / 2.0, phi)
             .withIndex()
-            .constrainOnce()
             .zipWithNext()
-            .first { (x0, x1) -> `q div (1-q)` * (x1.value - x0.value).absoluteValue < eps }.second
+            .first { (x1, x2) -> `q div (1-q)` * (x2.value - x1.value).absoluteValue < eps }.second
             .valid()
     }
 }

@@ -31,12 +31,17 @@ operator fun Function.times(t: Double): Function = when {
     t.absoluteValue < DoubleComparator.EPS -> zero
     else -> unaryMinus() * t.absoluteValue
 }
+
+operator fun Function.times(fn: Function): Function = Function({ fn(it) * this(it) })
 operator fun Fn.times(t: Double): Fn = Fn(function * t, differential * t, secondDifferential * t)
 
-fun const(c: Double) = Function({ c }, SimpleRangeToBoolean(), SimpleRangeToBoolean())
+operator fun Double.div(fn: Function): Function = Function({ this / fn(it) })
+
+fun const(c: Double) = Function({ c }, EmptyRangeToBoolean(), EmptyRangeToBoolean())
 fun constFn(c: Double): Fn = Fn(const(c), zero, zero)
 
 val zero = const(0.0)
 val zeroFn = constFn(0.0)
 
-val x = Fn(Function({ it }, SimpleRangeToBoolean(0.0), SimpleRangeToBoolean(0.0)), const(1.0), const(0.0))
+val x = Function({ it }, SimpleRangeToBoolean(0.0), SimpleRangeToBoolean(0.0))
+val xFn = Fn(x, const(1.0), const(0.0))
