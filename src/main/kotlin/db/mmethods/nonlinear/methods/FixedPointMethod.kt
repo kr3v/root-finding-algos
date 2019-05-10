@@ -18,7 +18,7 @@ object FixedPointMethod : IterationMethod {
     ): Validated<Errors, IndexedValue<Double>> {
         val seq = fn.differential.allExtremaValues(range)
         if (!seq.nonZeroAndHasSameSign()) {
-            return Invalid(Errors.NOT_APPLICABLE)
+            return Invalid(Errors.NOT_APPLICABLE_DIFFERENTIAL_INVALID)
         }
         if (fn(range.start) * fn(range.endInclusive) > 0) {
             return Invalid(Errors.NO_ROOT)

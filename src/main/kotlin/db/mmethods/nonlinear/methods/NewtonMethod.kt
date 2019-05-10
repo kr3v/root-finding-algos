@@ -15,10 +15,10 @@ object NewtonMethod : IterationMethod {
         range: DoubleRange,
         eps: Double
     ): Validated<Errors, IndexedValue<Double>> {
-        if (!fn.differential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE.invalid()
-        if (!fn.secondDifferential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE.invalid()
+        if (!fn.differential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE_DIFFERENTIAL_INVALID.invalid()
+        if (!fn.secondDifferential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE_SECOND_DIFFERENTIAL_INVALID.invalid()
         if (fn(range.start) * fn(range.endInclusive) > 0) return Errors.NO_ROOT.invalid()
-        if (checkIfRangeIsSmall(range, eps, fn)) return range.middle().indexed(0).valid()
+        if (checkIfRangeIsSmall(range, eps, fn)) return listOf(range.start, range.endInclusive).minBy(fn)!!.indexed(0).valid()
 
         val x0 = range.middle()
         val secondDifferentialSign = fn.secondDifferential(range.start).sign

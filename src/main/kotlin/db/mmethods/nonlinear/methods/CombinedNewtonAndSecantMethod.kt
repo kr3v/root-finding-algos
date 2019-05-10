@@ -15,10 +15,10 @@ object CombinedNewtonAndSecantMethod : IterationMethod {
         range: DoubleRange,
         eps: Double
     ): Validated<Errors, IndexedValue<Double>> {
-        if (!fn.differential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE.invalid()
-        if (!fn.secondDifferential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE.invalid()
+        if (!fn.differential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE_DIFFERENTIAL_INVALID.invalid()
+        if (!fn.secondDifferential.allExtremaValues(range).nonZeroAndHasSameSign()) return Errors.NOT_APPLICABLE_SECOND_DIFFERENTIAL_INVALID.invalid()
         if (fn(range.start) * fn(range.endInclusive) > 0) return Errors.NO_ROOT.invalid()
-        if (checkIfRangeIsSmall(range, eps, fn)) return range.middle().indexed(0).valid()
+        if (checkIfRangeIsSmall(range, eps, fn)) return listOf(range.start, range.endInclusive).minBy(fn)!!.indexed(0).valid()
 
         val sign = fn.differential(range.start).sign == fn.secondDifferential(range.start).sign
         val (xLeft, xRight) = splitByFour(range)
